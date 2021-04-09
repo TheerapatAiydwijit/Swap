@@ -1,0 +1,52 @@
+<div class="Porfile">
+        <div class="imgPofile">
+        </div>
+        <div class="ditailProfil">
+            <?php 
+            $userID = $_SESSION['USERID'];
+            $Profile = "SELECT * FROM user WHERE userID='$userID'";//หาข้อมูลของผู้ใช้
+            $DATAu = mysqli_query($conn, $Profile);
+            $DATAu = mysqli_fetch_array($DATAu);
+
+            $PostandLike = "SELECT NumLike FROM postdetail WHERE UserPost='$userID'";//หาจำนวณยอดไลย์รวมและจำนวณโพสรวม
+            $DATAp = mysqli_query($conn,$PostandLike);
+            $numrow = mysqli_num_rows($DATAp);//จำนวณโพสที่ได้โพสไป
+            $numLikeP=0;
+            while($plustlike = mysqli_fetch_array($DATAp)){
+                        // print_r($plustlike);
+                        $num = $plustlike['NumLike'];
+                        $numLikeP += (int)$num;
+                        // echo $numLikeP;
+                        // echo "<br>";
+            }
+            ?>
+            <p><?php echo $DATAu['Name']; ?></p>
+            <p><?php echo $DATAu['Email']; ?></p>
+            <p>จำนวณโพส: <?php echo $numrow; ?></p>
+            <p>ยอดไลย์รวม : <?php echo $numLikeP; ?></p>
+        </div>
+    </div>
+
+    <div  class="AllPost">
+            <?php 
+    $Allpost = "SELECT * FROM postdetail WHERE UserPost='$userID'";//หาโพสทั้งหมด
+    $allpost = mysqli_query($conn,$Allpost);
+    
+                while($DATAap = mysqli_fetch_array($allpost)){ ?>
+                    <div id="<?php echo $DATAap['PostID']; ?>">
+                        <a href="SujiectArea.php?PostID=<?php echo $DATAap['PostID']; ?>"><p><?php echo $DATAap['Topic']; ?></p></a>
+                        <p><?php echo $DATAap['Date']; ?></p>
+                        <p><?php echo $DATAap['NumLike'];?></p>
+                    </div>
+                        <?php
+                            $postID = $DATAap['PostID'];
+                            $category ="SELECT * FROM categoryonpost INNER JOIN category ON categoryonpost.ID = category.ID WHERE PostID='$postID'";
+                            $catequ = mysqli_query($conn,$category);
+                            while($DATAcate = mysqli_fetch_array($catequ)){
+                                echo $DATAcate['NameCategory']."  ";
+                            } ?> 
+                            <a href="Process/DeleteSujiect.php?PostID=<?php echo $DATAap['PostID']; ?>"><p>ลบกระทู้</p></a>
+               <?php 
+            }?>
+            
+    </div>
